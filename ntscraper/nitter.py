@@ -12,6 +12,9 @@ from logging.handlers import QueueHandler
 from multiprocessing import Pool, Queue, cpu_count
 from sys import stdout
 from tqdm import tqdm
+from urllib.parse import urlparse
+import requests
+from bs4 import BeautifulSoup
 
 logging.basicConfig(
     level=logging.INFO,
@@ -1180,3 +1183,42 @@ class Nitter:
             with Pool(len(username)) as p:
                 results = list(p.map(self._search_profile_dispatch, args))
             return results
+def __init__(self):
+        # Initialize any required attributes
+        self.base_url = 'https://x.com'
+
+def get_tweets(self, keyword, mode='term', number=100):
+        # Implement the logic to get tweets based on a keyword
+        search_url = f"{self.base_url}/search?f=tweets&q={keyword}&src=typed_query"
+        response = requests.get(search_url)
+        if response.status_code == 200:
+            # Parse the response to extract tweets
+            tweets = self.parse_tweets(response.text, number)
+            return {'tweets': tweets}
+        else:
+            return {'tweets': []}
+
+def parse_tweets(self, html, number):
+        # Implement the logic to parse tweets from the HTML response
+        # This is a placeholder implementation
+        tweets = re.findall(r'<p class="tweet-text">(.*?)</p>', html)
+        return tweets[:number]
+
+def get_tweets_for_paper(self, paper_url, mode='term', number=100):
+        # Implement the logic to get tweets related to the paper URL
+        keyword = self.extract_keyword_from_url(paper_url)
+        tweets = self.get_tweets(keyword, mode=mode, number=number)
+        return tweets['tweets']
+
+def extract_keyword_from_url(self, url):
+        # Implement the logic to extract a keyword from the paper URL
+        # This is a placeholder implementation
+        match = re.search(r'articles/([^/]+)', url)
+        if match:
+            return match.group(1)
+        return 'example_keyword'
+
+nitter = Nitter()
+paper_url = 'https://www.nature.com/articles/s41586-024-08449-y'
+tweets = nitter.get_tweets_for_paper(paper_url, mode='term', number=100)
+print(tweets)
